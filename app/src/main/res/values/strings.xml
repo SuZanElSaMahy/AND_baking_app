@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">BakingApp</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="common_no_internet_available">No Internet Available</string>
+    <string name="common_screen_general_error">Error</string>
+    <string name="error_str">No data found</string>
+    <string name="servings">Servings: %1$s </string>
+    <string name="preposition">%1$s of</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="recipe_state">recipe</string>
+
+</resources>

@@ -1,0 +1,41 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.suzanelsamahy.bakingapp.RecipePagerFragment">
+
+
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+        android:id="@+id/playerView"
+        android:layout_width="match_parent"
+        android:layout_height="220dp" />
+
+    <ImageView
+        android:id="@+id/step_placeholder_iv"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:visibility="gone"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/horizontalHalf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/playerView"
+        android:orientation="horizontal" />
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/horizontalHalf">
+
+        <TextView
+            android:id="@+id/step_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hello" />
+
+    </ScrollView>
+
+
+</RelativeLayout>
