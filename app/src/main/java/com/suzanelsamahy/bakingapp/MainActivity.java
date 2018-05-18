@@ -121,11 +121,9 @@ public class MainActivity extends BaseAppCompatActivity implements
             @Override
             public void onItemClick(Recipe item , int pos) {
 
-               // Utilities.addFavourite(MainActivity.this, item);
-                SharedPrefrenceManager.getInstance(MainActivity.this).saveFavorites(item.getIngredients());
-                SharedPrefrenceManager.setFavoriteRecipeId(MainActivity.this, item.getId());
-                RecipeService.startAction(MainActivity.this);
-
+//                SharedPrefrenceManager.getInstance(MainActivity.this).saveFavorites(item.getIngredients());
+//                SharedPrefrenceManager.setFavoriteRecipeId(MainActivity.this, item.getId());
+//                RecipeService.startAction(MainActivity.this);
 
                 Intent intent = new Intent(MainActivity.this, StepListActivity.class);
                 intent.putExtra(RECIPE_INT, item);
@@ -138,14 +136,22 @@ public class MainActivity extends BaseAppCompatActivity implements
 
                 if (click) {
                     Toast.makeText(MainActivity.this, "Added to Favorites", Toast.LENGTH_LONG).show();
-//                    Utilities.addFavourite(MainActivity.this, recipe);
-//                    SharedPrefrenceManager.getInstance(MainActivity.this).saveFavorites(recipe.getIngredients());
-//                    Utilities.setFavoriteRecipeId(MainActivity.this, recipe.getId());
-                  //  RecipeService.startAction(getApplicationContext());
-                } else {
-                    Utilities.deleteFavorite(MainActivity.this, recipe.getId());
-                    Toast.makeText(MainActivity.this, "Removed From Favorites", Toast.LENGTH_LONG).show();
+                   // save favorite in DB
+                   // Utilities.addFavourite(MainActivity.this, recipe);
+
+                    // save favorite in shared prefrence
+                    SharedPrefrenceManager.getInstance(MainActivity.this).saveFavorites(recipe.getIngredients());
+                    SharedPrefrenceManager.setFavoriteRecipeId(MainActivity.this, recipe.getId());
+                    RecipeService.startAction(getApplicationContext());
                 }
+
+
+//                else {
+//
+//                    // delete from DB
+//                    //Utilities.deleteFavorite(MainActivity.this, recipe.getId());
+//                    Toast.makeText(MainActivity.this, "Removed From Favorites", Toast.LENGTH_LONG).show();
+//                }
             }
         });
     }
