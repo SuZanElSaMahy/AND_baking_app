@@ -2,13 +2,16 @@ package com.suzanelsamahy.bakingapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.suzanelsamahy.bakingapp.adapters.MainRecyclerAdapter;
 import com.suzanelsamahy.bakingapp.api.presenter.BakingPresenter;
@@ -17,6 +20,7 @@ import com.suzanelsamahy.bakingapp.api.view.BakingView;
 import com.suzanelsamahy.bakingapp.base.BaseAppCompatActivity;
 import com.suzanelsamahy.bakingapp.data.SharedPrefrenceManager;
 import com.suzanelsamahy.bakingapp.models.Recipe;
+import com.suzanelsamahy.bakingapp.test.SimpleIdlingResource;
 import com.suzanelsamahy.bakingapp.widget.RecipeService;
 
 import java.util.ArrayList;
@@ -41,6 +45,10 @@ public class MainActivity extends BaseAppCompatActivity implements
     Button btnRetry;
 
 
+    @Nullable
+    private SimpleIdlingResource idingResource;
+
+
     private Unbinder unbinder;
     private MainRecyclerAdapter recyclerAdapter;
     private boolean mTwoPane;
@@ -54,6 +62,8 @@ public class MainActivity extends BaseAppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        getIdlingResource();
+
 
         if (savedInstanceState != null) {
             recipesList = savedInstanceState.getParcelableArrayList(getString(R.string.recipe_state));
@@ -82,6 +92,11 @@ public class MainActivity extends BaseAppCompatActivity implements
         }
 
 
+        if (idingResource != null) {
+            idingResource.setIdleState(false);
+        }
+
+
         //   getSupportLoaderManager().initLoader(1, null, this).forceLoad();
     }
 
@@ -105,7 +120,7 @@ public class MainActivity extends BaseAppCompatActivity implements
 //    }
 //
 //    @Override
-//    public void onLoaderReset(Loader<List<Recipe>> loader) {
+//     public void onLoaderReset(Loader<List<Recipe>> loader) {
 //        recyclerAdapter.setRecipes(new ArrayList<Recipe>());
 //    }
 
@@ -115,45 +130,27 @@ public class MainActivity extends BaseAppCompatActivity implements
         errorLayout.setVisibility(View.GONE);
         hideProgressDialog();
         recyclerAdapter.setRecipes(recipeList);
-        RecipeService.startAction(getApplicationContext());
+        //RecipeService.startRecipeWidget(getApplicationContext());
 
         recyclerAdapter.setOnItemClickListener(new MainRecyclerAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(Recipe item , int pos) {
-
-//                SharedPrefrenceManager.getInstance(MainActivity.this).saveFavorites(item.getIngredients());
-//                SharedPrefrenceManager.setFavoriteRecipeId(MainActivity.this, item.getId());
-//                RecipeService.startAction(MainActivity.this);
-
+            public void onItemClick(Recipe item, int pos) {
+                // save favorite in shared prefrence
+                SharedPrefrenceManager.getInstance(MainActivity.this).saveFavorites(item.getIngredients());
+                SharedPrefrenceManager.setFavoriteRecipeId(MainActivity.this, item.getId());
+                RecipeService.startRecipeWidget(getApplicationContext());
                 Intent intent = new Intent(MainActivity.this, StepListActivity.class);
                 intent.putExtra(RECIPE_INT, item);
                 intent.putExtra(RECIPE_Bool, pos);
                 startActivity(intent);
             }
-
-            @Override
-            public void onFavClick(Recipe recipe, boolean click) {
-
-                if (click) {
-                    Toast.makeText(MainActivity.this, "Added to Favorites", Toast.LENGTH_LONG).show();
-                   // save favorite in DB
-                   // Utilities.addFavourite(MainActivity.this, recipe);
-
-                    // save favorite in shared prefrence
-                    SharedPrefrenceManager.getInstance(MainActivity.this).saveFavorites(recipe.getIngredients());
-                    SharedPrefrenceManager.setFavoriteRecipeId(MainActivity.this, recipe.getId());
-                    RecipeService.startAction(getApplicationContext());
-                }
-
-
-//                else {
-//
-//                    // delete from DB
-//                    //Utilities.deleteFavorite(MainActivity.this, recipe.getId());
-//                    Toast.makeText(MainActivity.this, "Removed From Favorites", Toast.LENGTH_LONG).show();
-//                }
-            }
         });
+
+
+        if (idingResource != null) {
+            idingResource.setIdleState(true);
+        }
+
     }
 
     @Override
@@ -161,6 +158,9 @@ public class MainActivity extends BaseAppCompatActivity implements
         hideProgressDialog();
         showToastMessage(error);
         errorLayout.setVisibility(View.VISIBLE);
+        if (idingResource != null) {
+            idingResource.setIdleState(false);
+        }
     }
 
 
@@ -184,4 +184,13 @@ public class MainActivity extends BaseAppCompatActivity implements
         bakingPresenter.onDestroy();
     }
 
+
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (idingResource == null) {
+            idingResource = new SimpleIdlingResource();
+        }
+        return idingResource;
+    }
 }

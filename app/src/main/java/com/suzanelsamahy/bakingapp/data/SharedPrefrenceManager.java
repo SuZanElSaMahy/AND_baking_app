@@ -51,7 +51,7 @@ public class SharedPrefrenceManager {
     }
 
 
-    public ArrayList loadFavorites() {
+    public ArrayList<Ingredient> loadFavorites() {
         Gson gson = new Gson();
         String json = sharedPreferences.getString("fav", "");
         ArrayList<Ingredient> list = gson.fromJson(json, new TypeToken<ArrayList<Ingredient>>() {

@@ -67,10 +67,12 @@ public class RecipePagerFragment extends Fragment {
     private int stepNumber;
     SimpleExoPlayer mExoPlayer;
     private long playbackPosition;
-    public static final String PLAYBACK_POSITION = "playbackPosition";
-    private boolean playWhenReady;
-    public static final String PLAY_WHEN_READY = "playWhenReady";
-    public static final String URI = "uri";
+    public static final String PLAYBACK_POSITION = "playbackPos";
+    public static final String PARCE_STEP_ARRAY = "stepArray";
+    public static final String PARCE_STEP_NUMBER = "position";
+    private boolean playIfReady;
+    public static final String PLAY_IF_READY = "playIfReady";
+    public static final String URL = "url";
     private String url;
 
 
@@ -90,11 +92,11 @@ public class RecipePagerFragment extends Fragment {
         unbinder = ButterKnife.bind(this, view);
 
         if(savedInstanceState!=null){
-            stepList = savedInstanceState.getParcelableArrayList("stepArray");
-            stepNumber = savedInstanceState.getInt("position");
+            stepList = savedInstanceState.getParcelableArrayList(PARCE_STEP_ARRAY);
+            stepNumber = savedInstanceState.getInt(PARCE_STEP_NUMBER);
             playbackPosition = savedInstanceState.getLong(PLAYBACK_POSITION);
-            playWhenReady = savedInstanceState.getBoolean(PLAY_WHEN_READY);
-            url= savedInstanceState.getString("url");
+            playIfReady = savedInstanceState.getBoolean(PLAY_IF_READY);
+            url= savedInstanceState.getString(URL);
         }
 
 
@@ -106,7 +108,7 @@ public class RecipePagerFragment extends Fragment {
             mPlayerView.setVisibility(View.VISIBLE);
             mStepIv.setVisibility(View.GONE);
             initializePlayer(Uri.parse(videoUrl));
-            goFullScreen();
+            onFullScreenMode();
         } else if (!TextUtils.isEmpty(currentStep.getThumbnailURL())){
             mPlayerView.setVisibility(View.GONE);
             mStepIv.setVisibility(View.VISIBLE);
@@ -129,36 +131,33 @@ public class RecipePagerFragment extends Fragment {
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(getActivity(),
                     userAgent), new DefaultExtractorsFactory(),null, null);
             mExoPlayer.prepare(mediaSource);
-           // mExoPlayer.setPlayWhenReady(true);
-
-            mExoPlayer.setPlayWhenReady(playWhenReady);
+            mExoPlayer.setPlayWhenReady(playIfReady);
             mExoPlayer.seekTo(playbackPosition);
 
 
         }
     }
 
-    public void goFullScreen(){
+    public void onFullScreenMode(){
         int orientation = getResources().getConfiguration().orientation;
-     //   boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+        boolean twoPane = getResources().getBoolean(R.bool.isTwoPane);
+
+        if(orientation == Configuration.ORIENTATION_LANDSCAPE && !twoPane){
             mPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
             mPlayerView.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
             mPlayerView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
-            hideSystemUi();
+           // hide UI
+            View decorView = getActivity().getWindow().getDecorView();
+            decorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE);
         }
     }
 
-    private void hideSystemUi() {
-        View decorView = getActivity().getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE);
-    }
 
     private void releasePlayer(){
         if(mExoPlayer!=null){
@@ -171,22 +170,24 @@ public class RecipePagerFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (Util.SDK_INT > 23) {
-            initializePlayer(Uri.parse(url));
-        }
+//        if (Util.SDK_INT > 23) {
+//            initializePlayer(Uri.parse(url));
+//        }
+        initializePlayer(Uri.parse(url));
     }
 
 
     @Override
     public void onResume(){
         super.onResume();
-
-        if ((Util.SDK_INT <= 23 || mExoPlayer == null)) {
-            initializePlayer(Uri.parse(url));
-        } else {
-            mExoPlayer.seekTo(playbackPosition);
-            mExoPlayer.setPlayWhenReady(playWhenReady);
-        }
+        initializePlayer(Uri.parse(url));
+        mExoPlayer.seekTo(playbackPosition);
+        mExoPlayer.setPlayWhenReady(playIfReady);
+//        if ((Util.SDK_INT <= 23 || mExoPlayer == null)) {
+//            initializePlayer(Uri.parse(url));
+//        } else {
+//
+//        }
     }
 
     @Override
@@ -201,8 +202,11 @@ public class RecipePagerFragment extends Fragment {
     public void onPause() {
         super.onPause();
         playbackPosition = mExoPlayer.getCurrentPosition();
-        playWhenReady = mExoPlayer.getPlayWhenReady();
-        releasePlayer();
+        playIfReady = mExoPlayer.getPlayWhenReady();
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
     }
 
     @Override
@@ -215,11 +219,11 @@ public class RecipePagerFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putParcelableArrayList("stepArray", (ArrayList<? extends Parcelable>) stepList);
-        savedInstanceState.putInt("position", stepNumber);
+        savedInstanceState.putParcelableArrayList(PARCE_STEP_ARRAY, (ArrayList<? extends Parcelable>) stepList);
+        savedInstanceState.putInt(PARCE_STEP_NUMBER, stepNumber);
         savedInstanceState.putLong(PLAYBACK_POSITION, playbackPosition);
-        savedInstanceState.putBoolean(PLAY_WHEN_READY, playWhenReady);
-        savedInstanceState.putString("url",stepList.get(stepNumber).getVideoURL());
+        savedInstanceState.putBoolean(PLAY_IF_READY, playIfReady);
+        savedInstanceState.putString(URL,stepList.get(stepNumber).getVideoURL());
     }
 
 }

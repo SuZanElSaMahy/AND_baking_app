@@ -23,10 +23,6 @@
             android:name=".StepListActivity"
             android:parentActivityName=".MainActivity"></activity>
 
-        <provider
-            android:name=".data.RecipeProvider"
-            android:authorities="com.suzanelsamahy.bakingapp"
-            android:exported="false" />
 
         <receiver android:name=".widget.RecipeAppWidget">
             <intent-filter>

@@ -2,7 +2,7 @@ package com.suzanelsamahy.bakingapp.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.suzanelsamahy.bakingapp.RecipePagerFragment;
 import com.suzanelsamahy.bakingapp.models.Step;
@@ -14,7 +14,7 @@ import java.util.List;
  * Created by SuZan ElsaMahy on 07-May-18.
  */
 
-public class StepsPagerAdapter extends FragmentPagerAdapter {
+public class StepsPagerAdapter extends FragmentStatePagerAdapter {
     public List<Step> steps = new ArrayList<>();
 
     public StepsPagerAdapter(FragmentManager fm, List<Step> steps) {

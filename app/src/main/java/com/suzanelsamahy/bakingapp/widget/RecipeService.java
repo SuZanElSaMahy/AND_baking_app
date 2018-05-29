@@ -22,7 +22,7 @@ public class RecipeService extends IntentService {
 
 
 
-    public static void startAction(Context context) {
+    public static void startRecipeWidget(Context context) {
         Intent intent = new Intent(context, RecipeService.class);
         context.startService(intent);
     }
@@ -36,10 +36,14 @@ public class RecipeService extends IntentService {
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
                 int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, RecipeAppWidget.class));
             String recipeName;
-                if(id==1){
-                    recipeName = "Nutella";
+            if (id == 1) {
+                    recipeName = "Nutella Pie";
+                } else if(id==2) {
+                    recipeName = "Brownies";
+                } else if (id==3){
+                    recipeName ="Yellow Cake";
                 } else {
-                    recipeName = "test";
+                    recipeName = "Cheese cake";
                 }
                 RecipeAppWidget.updateRecipeWidgets(getApplicationContext(),appWidgetManager,appWidgetIds,ingredients,recipeName);
 

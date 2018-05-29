@@ -6,9 +6,9 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/app_widget_ingredient_name"
+        android:id="@+id/widget_ingredient_name"
         android:layout_width="match_parent"
         style="@style/TextAppearance.AppCompat.Caption"
         android:layout_height="wrap_content"
-        tools:text="Recipe name"/>
+        tools:text="Recipe name" />
 </LinearLayout>
