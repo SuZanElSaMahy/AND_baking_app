@@ -70,29 +70,31 @@ public class MasterDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
+        View view = inflater.inflate(R.layout.fragment_master_detail, container, false);
+        unbinder = ButterKnife.bind(this, view);
+
         if(savedInstanceState!=null){
             stepItem = savedInstanceState.getParcelableArrayList("g");
             position =savedInstanceState.getInt("h");
         }
 
 
-        View view = inflater.inflate(R.layout.fragment_master_detail, container, false);
-        unbinder = ButterKnife.bind(this, view);
         mSectionsPagerAdapter = new StepsPagerAdapter(getActivity().getSupportFragmentManager(),stepItem);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(position);
         recipeStepTabLayout.setupWithViewPager(mViewPager);
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-            @Override
-            public void onPageSelected(int position) {
-            }
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
+//        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//            @Override
+//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//            }
+//            @Override
+//            public void onPageSelected(int position) {
+//            }
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//            }
+//        });
 
         return view;
     }
@@ -110,6 +112,4 @@ public class MasterDetailFragment extends Fragment {
         savedInstanceState.putParcelableArrayList("g", (ArrayList<? extends Parcelable>) stepItem);
         savedInstanceState.putInt("h", position);
     }
-
-
 }

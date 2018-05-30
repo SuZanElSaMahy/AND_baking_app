@@ -42,15 +42,14 @@ public class StepListActivity extends BaseAppCompatActivity implements StepListF
                     MasterDetailFragment detailFragmentFragment = MasterDetailFragment.getInstance(clickedPostion,args.getSteps());
                     fragmentManager.beginTransaction().add(R.id.step_detail_container, detailFragmentFragment,"detail")
                             .commit();
-
                 }
-
             } else {
-
-                StepListFragment mainFragment = StepListFragment.getInstance(args);
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.step_container, mainFragment)
-                        .addToBackStack(null).commit();
+                if(savedInstanceState==null) {
+                    StepListFragment mainFragment = StepListFragment.getInstance(args);
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.step_container, mainFragment)
+                            .addToBackStack(null).commit();
+                }
             }
 
            setTitle(args.getName());
