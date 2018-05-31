@@ -38,7 +38,7 @@ public class MasterDetailFragment extends Fragment {
     @BindView(R.id.recipe_step_tablayout)
     TabLayout recipeStepTabLayout;
     private Unbinder unbinder;
-    private StepsPagerAdapter mSectionsPagerAdapter;
+    private StepsPagerAdapter stepsPagerAdapter;
     private List<Step> stepItem;
     private int position;
 
@@ -80,21 +80,10 @@ public class MasterDetailFragment extends Fragment {
         }
 
 
-        mSectionsPagerAdapter = new StepsPagerAdapter(getActivity().getSupportFragmentManager(),stepItem);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        stepsPagerAdapter = new StepsPagerAdapter(getActivity().getSupportFragmentManager(),stepItem);
+        mViewPager.setAdapter(stepsPagerAdapter);
         mViewPager.setCurrentItem(position);
         recipeStepTabLayout.setupWithViewPager(mViewPager);
-//        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-//            @Override
-//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//            }
-//            @Override
-//            public void onPageSelected(int position) {
-//            }
-//            @Override
-//            public void onPageScrollStateChanged(int state) {
-//            }
-//        });
 
         return view;
     }
